@@ -1,0 +1,93 @@
+<!-- confirmation.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Your Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .confirmation-container {
+            width: 80%;
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-details h3 {
+            color: #28a745;
+        }
+
+        .order-info p {
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+
+        .order-items {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .order-items li {
+            margin-bottom: 10px;
+        }
+
+        .continue-shopping {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .continue-button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+
+        .continue-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="confirmation-container">
+        <h2>Order Confirmation</h2>
+
+        <div class="order-details">
+            <h3>Thank you for your order, {{ user.name }}!</h3>
+            <p>Your order has been successfully placed. Below are your order details:</p>
+            <div class="order-info">
+                <p><strong>Order ID:</strong> {{ order.id }}</p>
+                <p><strong>Shipping Address:</strong> {{ order.address }}</p>
+                <p><strong>Total Amount:</strong> ${{ order.total }}</p>
+            </div>
+
+            <h4>Items Purchased:</h4>
+            <ul class="order-items">
+                {% for item in order.items %}
+                    <li>{{ item.name }} - ${{ item.price }} x {{ item.quantity }}</li>
+                {% endfor %}
+            </ul>
+
+            <p>Your order will be shipped soon. You will receive an email confirmation with tracking details.</p>
+        </div>
+
+        <div class="continue-shopping">
+            <a href="{% url 'home' %}" class="continue-button">Continue Shopping</a>
+        </div>
+    </div>
+
+</body>
+</html>

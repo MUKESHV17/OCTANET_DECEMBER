@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+        .navbar {
+            background-color: #232f3e;
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+        .navbar-brand img {
+            width: 180px;
+            height: auto;
+        }
+        .cart-table {
+            margin-top: 30px;
+        }
+        .cart-table th, .cart-table td {
+            vertical-align: middle;
+        }
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+        .quantity-buttons {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-buttons button {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            text-align: center;
+        }
+        footer {
+            background-color: #232f3e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .back-arrow {
+            cursor: pointer;
+            font-size: 20px;
+            color: #232f3e;
+        }
+        .back-arrow:hover {
+            color: #ff9900;
+        }
+        .btn-purchase {
+            background-color: #ff9900;
+            color: white;
+            width: 100%;
+            font-size: 18px;
+            padding: 10px;
+        }
+        .btn-purchase:hover {
+            background-color: #ff8000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon Logo">
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">
+                        <i class="bi bi-arrow-left-circle back-arrow"></i> Back to Home
+                    </a>
+                    
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Table -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Your Shopping Cart</h1>
+        <table class="table table-bordered cart-table">
+            <thead class="table-secondary">
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- Cart items will be dynamically populated here -->
+            </tbody>
+        </table>
+
+        <h4 class="text-end mb-4">Grand Total: ₹<span id="grand-total">0</span></h4>
+        <button class="btn btn-purchase">Proceed to Purchase</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 My E-Commerce Store. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartItemsContainer = document.getElementById('cart-items');
+            const grandTotalElement = document.getElementById('grand-total');
+
+            // Clear existing rows
+            cartItemsContainer.innerHTML = '';
+
+            let grandTotal = 0;
+
+            // Populate rows
+            cart.forEach((product, index) => {
+                const productTotal = product.price * product.quantity;
+                grandTotal += productTotal;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${product.image}" alt="${product.name}" class="cart-item-image"></td>
+                    <td>${product.name}</td>
+                    <td>₹${product.price}</td>
+                    <td>
+                        <div class="quantity-buttons">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${index}, -1)">-</button>
+                            <span class="px-3">${product.quantity}</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${index}, 1)">+</button>
+                        </div>
+                    </td>
+                    <td>₹${productTotal}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removeFromCart(${index})">Remove</button>
+                    </td>
+                `;
+                cartItemsContainer.appendChild(row);
+            });
+
+            // Update grand total
+            grandTotalElement.textContent = grandTotal.toFixed(2);
+        }
+
+        function removeFromCart(index) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1); // Remove the product at the specified index
+            localStorage.setItem('cart', JSON.stringify(cart)); // Update localStorage
+            loadCart(); // Reload cart table
+        }
+
+        function changeQuantity(index, delta) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart[index].quantity + delta > 0) {
+                cart[index].quantity += delta;
+                localStorage.setItem('cart', JSON.stringify(cart)); // Update localStorage
+                loadCart(); // Reload cart table
+            }
+        }
+
+        // Load cart on page load
+        window.onload = loadCart;
+    </script>
+</body>
+</html>
